@@ -20,7 +20,7 @@ object DatabaseDataBuilder : ConfigConstants() {
 
         val response = client.send(request, HttpResponse.BodyHandlers.ofString())
 
-        Gson().fromJson(response.body(), Array<Person>::class.java)
+        Gson().fromJson(response.body(), Array<Person>::class.java).toMutableList()
     }
 
     private val groupsMap = mutableMapOf<String, List<Subject>>()
@@ -251,7 +251,7 @@ object DatabaseDataBuilder : ConfigConstants() {
         }
     }
 
-    fun createAll(amount: Int = 1000) {
+    fun createAll(amount: Int = 100) {
         for (i in 0 until amount) {
             val isHalf = i > amount / 2 - 1
 
@@ -263,7 +263,7 @@ object DatabaseDataBuilder : ConfigConstants() {
 
                     val currCourse = randInt(1, 4)
                     val currSemester = currCourse * randInt(1, 2)
-                    val person = people[0]
+                    val person = people.first()
                     val student =
                         Student(
                             id = UUID.randomUUID(),
@@ -279,7 +279,7 @@ object DatabaseDataBuilder : ConfigConstants() {
                     studentList += student
                 }
                 "Teacher" -> {
-                    val person = people[0]
+                    val person = people.first()
                     val teacher =
                         Teacher(
                             id = UUID.randomUUID(),
@@ -295,7 +295,7 @@ object DatabaseDataBuilder : ConfigConstants() {
                     println("Wrong user group")
                 }
             }
-            people.shuffle()
+            people.removeFirst()
         }
         createSubjects()
 
